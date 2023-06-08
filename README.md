@@ -2,6 +2,10 @@
 
 Brandon Dioneda, Samuel Zhang
 
+## Exploratory Data Analysis
+
+Our exploratory data analysis on this dataset can be found here: ![Exploratory Data Analysis](https://apm-denizens.github.io/dsc80-project3/)
+
 ## Framing the Problem
 
 This is a multiclass classification problem. The role/'position' being predicted has 5 possible values ('top', 'jng', 'mid', 'bot', 'sup').
