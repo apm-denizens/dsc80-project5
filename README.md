@@ -49,19 +49,19 @@ Similar to our baseline model, we decided to use a random forest classifier. We 
 
 We used 5-fold cross validation to perform a gridsearch over these hyperparameters for our random forest classifier.
 
-hyperparameters = {
-'random-forestn_estimators': [25, 50, 100, 150],
-'random-forestcriterion': ['gini', 'entropy'],
-'random-forestmax_depth' : [5, 10, 15, None],
-'random-forestmax_features': ['sqrt', 'log2']
+hyperparameters = {  
+'random-forestn_estimators': [25, 50, 100, 150],  
+'random-forestcriterion': ['gini', 'entropy'],  
+'random-forestmax_depth' : [5, 10, 15, None],  
+'random-forestmax_features': ['sqrt', 'log2']  
 }
 
-Through our grid search, we found that this combination of hyperparameters led to the best results on cross-validation.
-{
-'random-forestn_estimators': 150
-'random-forestcriterion': 'gini',
-'random-forestmax_depth': None,
-'random-forestmax_features': 'log2',
+Through our grid search, we found that this combination of hyperparameters led to the best results on cross-validation.  
+{  
+'random-forestn_estimators': 150  
+'random-forestcriterion': 'gini',  
+'random-forestmax_depth': None,  
+'random-forestmax_features': 'log2',  
 }
 
 Through using these hyperparameters in our final model, the accuracy results were:
@@ -81,7 +81,7 @@ It's entirely expected for our test accuracy to be lower than our validation acc
 
 In League, there are two sides of the map. 'Red' and 'Blue'. We wanted to see whether model performance differs significantly between these two sides/groups.
 
-Null Hypothesis: Our model is fair. It's accuracy for the Red & Blue sides are roughly the same, and any differences are due to random chance.
+Null Hypothesis: Our model is fair. It's accuracy for the Red & Blue sides are roughly the same, and any differences are due to random chance.  
 Alt Hypothesis: Our model is unfair. It's accuracy for the Blue team is higher.
 
 The test statistic we used was difference in accuracies. (blue_accuracy - red_accuracy). Higher values of the test-statistic point towards the Alternative Hypothesis, and lower values of the test statistic point towards the Null Hypothesis.
