@@ -1,5 +1,7 @@
 # League of League of Legends Role Prediction from Post-Game Data
 
+Brandon Dioneda, Samuel Zhang
+
 ## Framing the Problem
 
 This is a multiclass classification problem. The role/'position' being predicted has 5 possible values ('top', 'jng', 'mid', 'bot', 'sup').
