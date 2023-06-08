@@ -2,25 +2,15 @@
 
 ## Framing the Problem
 
--   Clearly state your prediction problem and type (classification or regression). If you are building a classifier, make sure to state whether you are performing binary classification or multiclass classification.
-
 This is a multiclass classification problem. The role/'position' being predicted has 5 possible values ('top', 'jng', 'mid', 'bot', 'sup').
-
--   Report the response variable (i.e. the variable you are predicting) and why you chose it, the metric you are using to evaluate your model and why you chose it over other suitable metrics (e.g. accuracy vs. F1-score).
 
 For 'role', this information is stored in the 'position' column, so our response variable is naturally this column.
 
-** Metric Discussion - Accuracy? **
-
 The metric we have chosen to evaluate the model with is simply accuracy. For our case, false-negatives and false-positives have an equal cost (unlike in medical-diagonsis where false-negatives are potentially far more costly than false-positives). We want to maximize true-positives & true-negatives, and since we have an exactly even class distribution, we have chosen accuracy.
-
--   Note: Make sure to justify what information you would know at the “time of prediction” and to only train your model using those features. For instance, if we wanted to predict your final exam grade, we couldn’t use your Project 5 grade, because Project 5 is only due after the final exam!
 
 Since we're dealing with post-game data (that's the nature of our dataset), our "time of prediction" would be when the game has already ended. Subsequently, other than the 'position' column (what we're trying to predict), we have access to all of the other columns at prediction time.
 
 ## Baseline Model
-
--   Describe your model and state the features in your model, including how many are quantitative, ordinal, and nominal, and how you performed any necessary encodings.
 
 For our baseline model, we decided to keep it fairly bare-bones. The features we chose for it were, 'champion' (the name of the champion) and 'kill-death ratio' (an engineered feature for kills/deaths).
 
@@ -34,8 +24,6 @@ There were some issues with NaN/Inf from dividing by zero. We initially decided 
 
 [Note to Costin if reading this: We were just dumb and made silly bugs in code. Adding this feature does give model more information to improve training accuracy. :)]
 
--   Report the performance of your model and whether or not you believe your current model is “good” and why.
-
 Usually random-forest classifiers handle large tabular data well, and perform decently in multiclass-classification problems. Through using a random-forest classifier with default sklearn hyper-parameters, we achieved these accuracies:
 
 TRAIN: 0.9421552878179384  
@@ -43,11 +31,7 @@ VAL: 0.930843373493976
 
 In this case, it doesn't seem as if there is too much overfitting going on, which is nice. (The training accuracy is not significantly higher than the validation accuracy.) Through this, our validation accuracy being only about a percent lower than our training accuracy, we'd argue that our baseline model performs well on unseen data.
 
--   Tip: Make sure to hit all of the points above: many projects in the past have lost points for not doing so.
-
 ## Final Model
-
--   State the features you added and why they are good for the data and prediction task. Note that you can’t simply state “these features improved my accuracy”, since you’d need to choose these features and fit a model before noticing that – instead, talk about why you believe these features improved your model’s performance from the perspective of the data generating process.
 
 The features we ended up choosing to add were "visionscore", "earned gpm", "cspm", "vspm" , "earnedgold", "wardsplaced", "wpm".
 
@@ -62,15 +46,15 @@ The QuantileTransformer transforms features to follow a normal/uniform distribut
 
 For "earnedgold" (quantitative discrete), "earned gpm" (quantitative continuous), and "cspm" (quantitative continuous), having higher values for these features means one is more likely to be receiving a large chunk of resources on their team. Thus, it means that they're more likely to be in a carry role on their team. Having lower values for these columns, means that one is more likely to be a support.
 
-For "earnedgold" and "earned gpm", these columns are fairly normal (insert plots), but are not standard normal.
+For columns like "earnedgold" and "earned gpm", they are fairly normal, but are not standard normal.
+
+Example:
 
 <iframe src="images/earnedgold_histogram.html" width="100%" height="500px" frameBorder=0></iframe>
 
 Some machine learning algorithms may behave poorly if features are not standard normally distributed. As a result, using a StandardScaler transformation to make these features standard-normal, would likely benefit performance (or not make a difference).
 
--   Describe the modeling algorithm you chose, the hyperparameters that ended up performing the best, and the method you used to select hyperparameters and your overall model. Describe how your Final Model’s performance is an improvement over your Baseline Model’s performance.
-
-Similar to our baseline model, we decided to use a random forest classifier.
+Similar to our baseline model, we decided to use a random forest classifier for the same reasons. (Handles large tabular data well, and performs decently in multiclass-classification problems.)
 
 We used 5-fold cross validation to perform a gridsearch over these hyperparameters for our random forest classifier.
 
@@ -99,9 +83,9 @@ Through using these hyperparameters in our final model, the accuracy results wer
 TRAIN: 1.000000000  
 VAL: 0.9572690763052208
 
-It's interesting to note how much higher our training accuracy is compared to our validation accuracy. This suggests that the model did notably overfit. However, our validation accuracy is still boasts a signifiant improvement over the validation accuracy for our baseline model (baseline model validation accuracy was: 0.930843373493976), which means that our final model generalized better to unseen data. There was roughly a 2.6% increase in accuracy for the validation set.
+It's interesting to note how much higher our training accuracy is compared to our validation accuracy. This suggests that the model did notably overfit. However, our final model validation accuracy still boasts a signifiant improvement over the validation accuracy for our baseline model (baseline model validation accuracy was: 0.930843373493976), which means that our final model generalized better to unseen data. There was roughly a 2.6% increase in accuracy for the validation set.
 
-When running our model on our test set, which has not been used to fit parameters or hyperparameters, (untouched @ this point), our accuracy was:
+When running our model on our test set, which has not been used to fit parameters or hyperparameters, (untouched at this point) our accuracy was:
 
 TEST: 0.9568674698795181
 
@@ -109,10 +93,7 @@ It's entirely expected for our test accuracy to be lower than our validation acc
 
 ## Fairness Analysis
 
--   Clearly state your choice of Group X and Group Y, your evaluation metric, your null and alternative hypotheses, your choice of test statistic and significance level, the resulting p
-    -value, and your conclusion.
-
-In League, there are two sides of the map. 'Red' and 'Blue'. We wanted to see whether model performance differs significantly between these two sides/groups.
+In League, there are two sides of the map. 'Red' and 'Blue'. We wanted to see whether model performance (accuracy is our evaluation metric) differs significantly between these two sides/groups.
 
 Null Hypothesis: Our model is fair. It's accuracy for the Red & Blue sides are roughly the same, and any differences are due to random chance.  
 Alt Hypothesis: Our model is unfair. It's accuracy for the Blue team is higher.
@@ -123,11 +104,5 @@ Our observed test statistic was: 0.0008353413654619279
 
 We performed a permutation test and simulated 100 test statistics under the null. We found that at the 0.05 significance level, we fail to reject the null-hypothesis with a p-value of 0.13. We lack sufficient evidence to reject the null hypothesis that the two groups have roughly similar accuracies. This does not mean however, that the null-hypothesis is correct. It could very well be the case that the alternative hypothesis is correct, but we just don't have enough information to know for certain.
 
--   Optional: Embed a visualization related to your permutation test in your website.
-
 <!-- ![Permutation Test Results](images/fairness-teststats.png) -->
 <iframe src="images/teststats_histogram.html" width="100%" height="500px" frameBorder=0></iframe>
-
--   Tip: When making writing your conclusions to the statistical tests in this project, never use language that implies an absolute conclusion; since we are performing statistical tests and not randomized controlled trials, we cannot prove that either hypothesis is 100% true or false.
-
-“Only a Sith deals in absolutes” - Obi-Wan Kenobi
